@@ -23,6 +23,8 @@ function updateTable() {
     tableBody.innerHTML = ''; // Clear existing rows
 
     let index = 0
+
+    // Dynamic table
     peopleData.forEach(person => {
         const newRow = tableBody.insertRow();
         newRow.insertCell(0).textContent = person.name;
@@ -30,14 +32,16 @@ function updateTable() {
         newRow.insertCell(2).textContent = ToDate(person.startTime) + ' ' + To24hours(person.startTime);
         newRow.insertCell(3).textContent = ToDate(person.endTime) + ' ' + To24hours(person.endTime);
 
+        // Remove button
         const removeButton = document.createElement("button");
-        removeButton.dataset.index = index;
-        removeButton.textContent = `Remove ${index}`;
+        removeButton.dataset.index = index; // Keep track of the index in the array
+        removeButton.textContent = "Remove";
         removeButton.type = "button";
         newRow.insertCell(4).appendChild(removeButton);
-        removeButton.addEventListener('click', function (event){
-            peopleData.splice(index, 1);
-            updateTable();
+        removeButton.addEventListener('click', function (){
+            const indexToRemove = removeButton.dataset.index;
+            peopleData.splice(indexToRemove, 1);
+            updateTable(); 
         })
 
         index += 1;
