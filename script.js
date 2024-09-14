@@ -3,7 +3,10 @@ const peopleData = [];
 
 function ToDate (dateTimeString){
     const date = new Date(dateTimeString);
-    return date.getDate();
+    let year = date.getFullYear();
+    let month = date.toLocaleString('default', { month: 'short' });
+    let day = date.getDay();
+    return `${year}-${month}-${day}`;
 }
 
 function To24hours(dateTimeString){
@@ -19,12 +22,25 @@ function updateTable() {
     const tableBody = document.getElementById('peopleTable').getElementsByTagName('tbody')[0];
     tableBody.innerHTML = ''; // Clear existing rows
 
+    let index = 0
     peopleData.forEach(person => {
         const newRow = tableBody.insertRow();
         newRow.insertCell(0).textContent = person.name;
         newRow.insertCell(1).textContent = person.city;
         newRow.insertCell(2).textContent = ToDate(person.startTime) + ' ' + To24hours(person.startTime);
-        newRow.insertCell(3).textContent = person.endTime;
+        newRow.insertCell(3).textContent = ToDate(person.endTime) + ' ' + To24hours(person.endTime);
+
+        const removeButton = document.createElement("button");
+        removeButton.dataset.index = index;
+        removeButton.textContent = `Remove ${index}`;
+        removeButton.type = "button";
+        newRow.insertCell(4).appendChild(removeButton);
+        removeButton.addEventListener('click', function (event){
+            peopleData.splice(index, 1);
+            updateTable();
+        })
+
+        index += 1;
     });
 }
 
