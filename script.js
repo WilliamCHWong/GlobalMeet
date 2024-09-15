@@ -1,6 +1,27 @@
-
-// Array to store people's data
 const peopleData = [];
+const timezones = [];
+
+// Example array of city names
+const cities = ['New York', 'Los Angeles', 'Chicago', 'Houston', 'Phoenix'];
+
+// Get the select element
+const selectElement = document.getElementById('city');
+
+// Function to populate the select element with options
+function populateDropdown(citiesArray) {
+    citiesArray.forEach(city => {
+        // Create a new option element
+        const option = document.createElement('option');
+        option.value = city; // Set the value attribute
+        option.textContent = city; // Set the text shown in the dropdown
+
+        // Append the option to the select element
+        selectElement.add(option);
+    });
+}
+
+// Call the function to populate the dropdown
+populateDropdown(cities);
 
 function ToDate (dateTimeString){
     const date = new Date(dateTimeString);
@@ -74,31 +95,6 @@ document.getElementById('resetButton').addEventListener('click', function() {
     updateTable();
 });
 
-const axios = require('axios');
-const cheerio = require('cheerio');
-
-const url = 'https://worldtimeapi.org/timezones';
-
-axios.get(url)
-  .then(response => {
-    const html = response.data;
-    const $ = cheerio.load(html);
-
-    const timezones = [];
-    const cities = [];
-
-    $('ul li, ol li').each((i, elem) => {
-      const timezone = $(elem).text();
-
-      if (timezone.includes('/') && !/\d/.test(timezone)) {
-        const [, city] = timezone.split('/');
-        timezones.push(timezone);
-        cities.push(city);
-      }
-    });
-    console.log(timezones);
-    console.log(cities);
-  })
-  .catch(error => {
-    console.error('Error fetching the webpage:', error);
-  });
+document.getElementById('populate').addEventListener('click', function() {
+    populateCities(cities);
+});

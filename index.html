@@ -13,7 +13,9 @@
         <label for="name">Name</label>
         <input type="text" id="name" required>
         <label for="city">City</label>
-        <input type="text" id="city" required>
+        <select id="city">
+            <!-- Options will be dynamically added here -->
+        </select>   
         <label for="startTime">Preferred Start Time:</label>
         <input type="datetime-local" id="startTime" required>
         <label for="endTime">Preferred End Time:</label>
@@ -21,6 +23,7 @@
         <button type="submit">Add Person</button>
     </form>
     <button type="button" id="resetButton">Reset Table</button>
+    <button type="button" id="populate">Populate</button>
 
     <h2>People's Data</h2>
     <table id="peopleTable">
