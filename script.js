@@ -1,100 +1,57 @@
-const peopleData = [];
+const express = require('express');
+const app = express();
+const axios = require('axios');
+const cheerio = require('cheerio');
+
+const url = 'https://worldtimeapi.org/timezones';
+const HTTP_PORT = 3001;
+
 const timezones = [];
+const cities = [];
+const peopleData = [];
 
-// Example array of city names
-const cities = ['New York', 'Los Angeles', 'Chicago', 'Houston', 'Phoenix'];
+app.set('view engine', 'ejs');
+// Middleware to parse data from the form submission
+app.use(express.urlencoded({ extended: true }));
 
-// Get the select element
-const selectElement = document.getElementById('city');
 
-// Function to populate the select element with options
-function populateDropdown(citiesArray) {
-    citiesArray.forEach(city => {
-        // Create a new option element
-        const option = document.createElement('option');
-        option.value = city; // Set the value attribute
-        option.textContent = city; // Set the text shown in the dropdown
+const fetchCities = async () => {
+    try {
+      const response = await axios.get(url);
 
-        // Append the option to the select element
-        selectElement.add(option);
-    });
-}
+      const html = response.data;
+      const $ = cheerio.load(html);
+  
+      $('ul li, ol li').each((i, elem) => {
+        const timezone = $(elem).text();
+  
+        if (timezone.includes('/') && !/\d/.test(timezone)) {
+          const [, city] = timezone.split('/');
+          if(!(cities.includes(city))){
+            cities.push(city.replace('_', ' '));
+          }
+          timezones.push(timezone);
+        }
+      });
 
-// Call the function to populate the dropdown
-populateDropdown(cities);
+    } catch (error) {
+      console.error('Error fetching the timezones:', error);
+    }
+  };
 
-function ToDate (dateTimeString){
-    const date = new Date(dateTimeString);
-    let year = date.getFullYear();
-    let month = date.toLocaleString('default', { month: 'short' });
-    let day = date.getDay();
-    return `${year}-${month}-${day}`;
-}
+  app.get('/', async (req, res) => {
+    if (cities.length === 0) {
+      await fetchCities();
+    }
+    res.render('index', { cities, peopleData });
+});
 
-function To24hours(dateTimeString){
-    const date = new Date(dateTimeString);
-    let hours = date.getHours();
-    let minutes = date.getMinutes();
-    hours = hours < 10 ? '0' + hours : hours;
-    minutes = minutes < 10 ? '0' + minutes : minutes;
-    return `${hours}:${minutes}`
-}
-
-function updateTable() {
-    const tableBody = document.getElementById('peopleTable').getElementsByTagName('tbody')[0];
-    tableBody.innerHTML = ''; // Clear existing rows
-
-    let index = 0
-
-    // Dynamic table
-    peopleData.forEach(person => {
-        const newRow = tableBody.insertRow();
-        newRow.insertCell(0).textContent = person.name;
-        newRow.insertCell(1).textContent = person.city;
-        newRow.insertCell(2).textContent = ToDate(person.startTime) + ' ' + To24hours(person.startTime);
-        newRow.insertCell(3).textContent = ToDate(person.endTime) + ' ' + To24hours(person.endTime);
-
-        // Remove button
-        const removeButton = document.createElement("button");
-        removeButton.dataset.index = index; // Keep track of the index in the array
-        removeButton.textContent = "Remove";
-        removeButton.type = "button";
-        newRow.insertCell(4).appendChild(removeButton);
-        removeButton.addEventListener('click', function (){
-            const indexToRemove = removeButton.dataset.index;
-            peopleData.splice(indexToRemove, 1);
-            updateTable(); 
-        })
-
-        index += 1;
-    });
-}
-
-document.getElementById('peopleForm').addEventListener('submit', function(event) {
-    event.preventDefault();
-
-    // Get form values
-    const name = document.getElementById('name').value;
-    const city = document.getElementById('city').value;
-    const startTime = document.getElementById('startTime').value;
-    const endTime = document.getElementById('endTime').value;
-
-    // Store in the array
+app.post('/add-person', (req, res) => {
+    const { name, city, startTime, endTime } = req.body;
     peopleData.push({ name, city, startTime, endTime });
-
-    // Update the table
-    updateTable();
-
-    // Clear the form
-    document.getElementById('peopleForm').reset();
+    res.render('index', { cities, peopleData });
 });
 
-// Reset
-document.getElementById('resetButton').addEventListener('click', function() {
-    peopleData.length = 0;
-    updateTable();
-});
-
-document.getElementById('populate').addEventListener('click', function() {
-    populateCities(cities);
-});
+app.listen(HTTP_PORT, () => {
+    console.log(`Server is listening at http://localhost:${HTTP_PORT}`);
+  });

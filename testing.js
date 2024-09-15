@@ -21,6 +21,7 @@ axios.get(url)
         timezones.push(timezone);
       }
     });
+    console.log(cities);
 
   })
   .catch(error => {

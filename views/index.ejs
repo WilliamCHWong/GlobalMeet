@@ -9,22 +9,29 @@
 </head>
 <body>
     <h1>Meeting Schedule</h1>
-    <form id="peopleForm">
+    <form action="/add-person" method="POST" id="peopleForm">
         <label for="name">Name</label>
-        <input type="text" id="name" required>
+        <input type="text" id="name" name="name" required>
+
         <label for="city">City</label>
-        <select id="city">
-            <!-- Options will be dynamically added here -->
-        </select>   
+        <select id="city" name="city">
+          <% if (cities.length > 0) { %>
+            <% cities.forEach(function(city) { %>
+              <option value="<%= city %>"><%= city %></option>
+            <% }); %>
+          <% } else { %>
+            <option value="">No cities available</option>
+          <% } %>
+        </select>
+
         <label for="startTime">Preferred Start Time:</label>
-        <input type="datetime-local" id="startTime" required>
+        <input type="datetime-local" id="startTime" name="startTime" required>
         <label for="endTime">Preferred End Time:</label>
-        <input type="datetime-local" id="endTime" required>
+        <input type="datetime-local" id="endTime" name="endTime" required>
         <button type="submit">Add Person</button>
     </form>
     <button type="button" id="resetButton">Reset Table</button>
-    <button type="button" id="populate">Populate</button>
-
+    
     <h2>People's Data</h2>
     <table id="peopleTable">
         <thead>
@@ -36,9 +43,16 @@
                 <th>Action</th>
             </tr>
         </thead>
-        <tbody>
-            <!-- Dynamic rows will be added here -->
-        </tbody>
+      <% if (peopleData.length > 0) { %>
+      <% peopleData.forEach(person => { %>
+        <tr>
+          <td><%= person.name %></td>
+          <td><%= person.city %></td>
+          <td><%= new Date(person.startTime).toLocaleString() %></td>
+          <td><%= new Date(person.endTime).toLocaleString() %></td>
+          <td><button type="button">Remove</button></td>
+        </tr>
+      <% })} %>
     </table>
     <script src="script.js"></script>
 </body>
