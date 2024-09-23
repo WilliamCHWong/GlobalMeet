@@ -8,52 +8,57 @@
     <link rel="stylesheet" href="styles.css">
 </head>
 <body>
-  <div class="container"><h1>Meeting Schedule</h1>
-    <form action="/add-person" method="POST" id="peopleForm">
-        <label for="name">Name</label>
-        <input type="text" id="name" name="name" required>
+    <div class="container">
+        <h1>Meeting Schedule</h1>
+        <form action="/add-person" method="POST" id="peopleForm" class="form-container">
+            <label for="name">Name</label>
+            <input type="text" id="name" name="name" placeholder="Enter your name" required>
 
-        <label for="city">City</label>
-        <select id="city" name="city">
-          <% if (cities.length > 0) { %>
-            <% cities.forEach(function(city) { %>
-              <option value="<%= city %>"><%= city %></option>
-            <% }); %>
-          <% } else { %>
-            <option value="">No cities available</option>
-          <% } %>
-        </select>
+            <label for="city">City</label>
+            <select id="city" name="city">
+              <% if (cities.length > 0) { %>
+                <% cities.forEach(function(city) { %>
+                  <option value="<%= city %>"><%= city %></option>
+                <% }); %>
+              <% } else { %>
+                <option value="">No cities available</option>
+              <% } %>
+            </select>
 
-        <label for="startTime">Preferred Start Time:</label>
-        <input type="datetime-local" id="startTime" name="startTime" required>
-        <label for="endTime">Preferred End Time:</label>
-        <input type="datetime-local" id="endTime" name="endTime" required>
-        <button type="submit">Add Person</button>
-    </form>
-    <button type="button" id="resetButton">Reset Table</button>
-    
-    <h2>People's Data</h2>
-    <table id="peopleTable">
-        <thead>
-            <tr>
-                <th>Name</th>
-                <th>City</th>
-                <th>Preferred Start Time</th>
-                <th>Preferred End Time</th>
-                <th>Action</th>
-            </tr>
-        </thead>
-      <% if (peopleData.length > 0) { %>
-      <% peopleData.forEach(person => { %>
-        <tr>
-          <td><%= person.name %></td>
-          <td><%= person.city %></td>
-          <td><%= new Date(person.startTime).toLocaleString() %></td>
-          <td><%= new Date(person.endTime).toLocaleString() %></td>
-          <td><button type="button">Remove</button></td>
-        </tr>
-      <% })} %>
-    </table>
+            <label for="startTime">Preferred Start Time:</label>
+            <input type="datetime-local" id="startTime" name="startTime" required>
+            <label for="endTime">Preferred End Time:</label>
+            <input type="datetime-local" id="endTime" name="endTime" required>
+            
+            <button type="submit" class="btn-submit">Add Person</button>
+        </form>
+
+        <button type="button" id="resetButton" class="btn-reset">Reset Table</button>
+        
+        <h2>People's Data</h2>
+        <div class="table-container">
+            <table id="peopleTable">
+                <thead>
+                    <tr>
+                        <th>Name</th>
+                        <th>City</th>
+                        <th>Preferred Start Time</th>
+                        <th>Preferred End Time</th>
+                        <th>Action</th>
+                    </tr>
+                </thead>
+                <% if (peopleData.length > 0) { %>
+                <% peopleData.forEach(person => { %>
+                  <tr>
+                    <td><%= person.name %></td>
+                    <td><%= person.city %></td>
+                    <td><%= new Date(person.startTime).toLocaleString() %></td>
+                    <td><%= new Date(person.endTime).toLocaleString() %></td>
+                    <td><button type="button" class="btn-remove">Remove</button></td>
+                  </tr>
+                <% })} %>
+            </table>
+        </div>
     <script src="script.js"></script>
 </body>
 </html>
